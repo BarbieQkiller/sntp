@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -30,10 +31,19 @@ public class Main {
             try {
                 socket.send(packet);
                 System.out.println("Request sent");
+                double localTimestamp = (System.currentTimeMillis()/1000.0) + 2208988800.0;
                 socket.receive(packet);
                 NtpMessage msg = new NtpMessage(packet.getData());
+                double roundTripDelay = (localTimestamp-msg.getOriginateTimestamp()) -
+                    (msg.getTransmitTimestamp() - msg.getReceiveTimestamp());
+                double localClockOffset = ((msg.getReceiveTimestamp() - msg.getOriginateTimestamp()) -
+                    (msg.getTransmitTimestamp() - localTimestamp)) / 2;
                 System.out.println("Got reply");
                 System.out.println(msg.toString());
+                System.out.println("Local timestamp: " + NtpMessage.timestampToString(localTimestamp));
+                System.out.println("Round-trip delay: " + new DecimalFormat("0.00").format(roundTripDelay*1000) + "ms");
+                System.out.println("Local clock offset: " + new DecimalFormat("0.00").format(localClockOffset*1000) + "ms");
+
             }
             catch (SocketTimeoutException e) {
                 serverNo++;

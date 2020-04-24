@@ -152,7 +152,7 @@ public class NtpMessage {
         "Transmit timestamp: " + timestampToString(transmitTimestamp);
     }
 
-    private String timestampToString(double timestamp) {
+    public static String timestampToString(double timestamp) {
         // timestamp is realtive to 1 jan 1900, timestamp in java is relative
         // 1 jan 1970
         double utc = timestamp - (2208988800.0);
@@ -165,5 +165,15 @@ public class NtpMessage {
         double fraction = timestamp -((long) timestamp);
         String fractionString = new DecimalFormat(".000000").format(fraction);
         return date + fractionString;
+    }
+
+    public double getOriginateTimestamp() {
+        return originateTimestamp;
+    }
+    public double getTransmitTimestamp() {
+        return transmitTimestamp;
+    }
+    public double getReceiveTimestamp() {
+        return receiveTimestamp;
     }
 }
